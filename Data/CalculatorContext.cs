@@ -6,6 +6,7 @@ namespace CalculatorAPI.Data
 {
     public class CalculatorContext : DbContext
     {
+        // connection
         public CalculatorContext(DbContextOptions<CalculatorContext> options)
             : base(options) { }
 
