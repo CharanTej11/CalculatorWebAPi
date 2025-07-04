@@ -1,6 +1,8 @@
-﻿using CalculatorAPI.Data;
+﻿using CalculatorWebAPi.Exceptions;
 using CalculatorAPI.Models;
 using Microsoft.AspNetCore.Mvc;
+using CalculatorAPI.Data;
+using CalculatorAPI.DTOs;
 
 namespace CalculatorWebAPI.Controllers
 {
@@ -15,39 +17,41 @@ namespace CalculatorWebAPI.Controllers
             _context = context;
         }
 
-        [HttpGet("add")]
-        public async Task<IActionResult> Add(double a, double b)
+        [HttpPost("add")]
+        public async Task<IActionResult> Add([FromBody] OperandsDto dto)
         {
-            double result = a + b;
-            await SaveCalculation("Add", a, b, result);
-            return Ok(result);
+            double result = dto.A + dto.B;
+            await SaveCalculation("Add", dto.A, dto.B, result);
+            return Ok(new { result });
         }
 
-        [HttpGet("subtract")]
-        public async Task<IActionResult> Subtract(double a, double b)
+        [HttpPost("subtract")]
+        public async Task<IActionResult> Subtract([FromBody] OperandsDto dto)
         {
-            double result = a - b;
-            await SaveCalculation("Subtract", a, b, result);
-            return Ok(result);
+            double result = dto.A - dto.B;
+            await SaveCalculation("Subtract", dto.A, dto.B, result);
+            return Ok(new { result });
         }
 
-        [HttpGet("multiply")]
-        public async Task<IActionResult> Multiply(double a, double b)
+        [HttpPost("multiply")]
+        public async Task<IActionResult> Multiply([FromBody] OperandsDto dto)
         {
-            double result = a * b;
-            await SaveCalculation("Multiply", a, b, result);
-            return Ok(result);
+            double result = dto.A * dto.B;
+            await SaveCalculation("Multiply", dto.A, dto.B, result);
+            return Ok(new { result });
         }
 
-        [HttpGet("divide")]
-        public async Task<IActionResult> Divide(double a, double b)
+        [HttpPost("divide")]
+        public async Task<IActionResult> Divide([FromBody] OperandsDto dto)
         {
-            if (b == 0)
-                return BadRequest("Cannot divide by zero.");
+            if (dto.B == 0)
+            {
+                throw new BadRequestException("Cannot divide by zero.");
+            }
 
-            double result = a / b;
-            await SaveCalculation("Divide", a, b, result);
-            return Ok(result);
+            double result = dto.A / dto.B;
+            await SaveCalculation("Divide", dto.A, dto.B, result);
+            return Ok(new { result });
         }
 
         private async Task SaveCalculation(string operation, double a, double b, double result)
